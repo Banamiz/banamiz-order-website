@@ -1,6 +1,6 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,25 +17,20 @@
       flex-direction: column;
       min-height: 100vh;
     }
-
     .container {
       width: 100%;
       max-width: 400px;
       background: white;
       padding: 20px;
       border-radius: 15px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       text-align: center;
     }
-
     img.logo {
       width: 120px;
       margin: 0 auto 10px;
     }
-
-    input,
-    select,
-    button {
+    input, select, button {
       width: 100%;
       padding: 10px;
       margin: 10px 0;
@@ -43,13 +38,11 @@
       border: 1px solid #ccc;
       font-size: 16px;
     }
-
     button {
       background-color: #fdbb00;
       border: none;
       font-weight: bold;
     }
-
     .item {
       display: flex;
       align-items: center;
@@ -59,18 +52,15 @@
       border: 1px solid #ddd;
       border-radius: 10px;
     }
-
     .item img {
       width: 60px;
       border-radius: 8px;
     }
-
     .item-info {
       text-align: left;
       flex: 1;
       margin-left: 10px;
     }
-
     .order-success {
       font-size: 24px;
       font-weight: bold;
@@ -78,7 +68,6 @@
     }
   </style>
 </head>
-
 <body>
   <div class="container" id="login-page">
     <img src="banamiz-logo.png" alt="Banamiz Logo" class="logo" />
@@ -134,37 +123,46 @@
       });
     }
 
-      function submitOrder() {
-    const customerData = {
-      name: document.getElementById('name').value,
-      email: document.getElementById('email').value,
-      phone: document.getElementById('phone').value,
-      location: document.getElementById('location').value,
-      order: document.getElementById('order').value
-    };
+    function submitOrder() {
+      const orderData = items.map((item, index) => {
+        const qty = parseInt(document.getElementById(`qty-${index}`).value);
+        return qty > 0 ? `${item.name} x${qty}` : null;
+      }).filter(Boolean);
 
+      const customerData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        location: document.getElementById('location').value,
+        order: orderData.join(', ')
+      };
+
+      
     // Send to Google Sheets
     fetch('https://script.google.com/macros/s/AKfycbyEjQsmHPqv-W4C0FgAp6FT-blRGQM1pJNOPuOnDtM-wyd0J_vWXUxyeWP4KfvFgGnyGQ/exec', {
       method: 'POST',
       body: JSON.stringify(customerData),
-      headers: { "Content-Type": "application/json" }
+      headers: {
+        'Content-Type': 'application/json'
+      }
     })
-    .then(res => res.text())
+    .then(response => response.text())
     .then(data => {
-      console.log(data);
+      console.log('Success:', data);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
 
-      // Open WhatsApp
-      const message = `*Banamiz Order*%0AName: ${customerData.name}%0APhone: ${customerData.phone}%0ALocation: ${customerData.location}%0AOrder: ${customerData.order}`;
-      const whatsappLink = `https://wa.me/+917558811574?text=${message}`;
-      window.open(whatsappLink, '_blank');
+    // Open WhatsApp
+    const message = `*Banamiz Order*%0AName: ${customerData.name}%0APhone: ${customerData.phone}%0ALocation: ${customerData.location}%0AOrder: ${customerData.order}`;
+    const whatsappLink = `https://wa.me/+917558811574?text=${message}`;
+    window.open(whatsappLink, '_blank');
+    
 
-      // Show success page
       document.getElementById('menu-page').style.display = 'none';
       document.getElementById('success-page').style.display = 'block';
-    })
-    .catch(err => console.error('Error:', err));
-  }
+    }
   </script>
 </body>
-
 </html>

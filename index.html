@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Banamiz Order App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #ffe100, #ffbb00);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    img.logo {
+      width: 120px;
+      margin: 0 auto 10px;
+    }
+
+    input,
+    select,
+    button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #fdbb00;
+      border: none;
+      font-weight: bold;
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+    }
+
+    .item img {
+      width: 60px;
+      border-radius: 8px;
+    }
+
+    .item-info {
+      text-align: left;
+      flex: 1;
+      margin-left: 10px;
+    }
+
+    .order-success {
+      font-size: 24px;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container" id="login-page">
+    <img src="banamiz-logo.png" alt="Banamiz Logo" class="logo" />
+    <h2>Welcome</h2>
+    <p>Login</p>
+    <input type="text" id="name" placeholder="Name" />
+    <input type="email" id="email" placeholder="Email" />
+    <input type="text" id="phone" placeholder="Phone Number (WhatsApp)" />
+    <input type="text" id="location" placeholder="Location" />
+    <button onclick="showMenu()">Submit</button>
+  </div>
+
+  <div class="container" id="menu-page" style="display:none">
+    <img src="banamiz-logo.png" alt="Banamiz Logo" class="logo" />
+    <div id="menu-list"></div>
+    <button onclick="submitOrder()">Order Now</button>
+  </div>
+
+  <div class="container" id="success-page" style="display:none">
+    <img src="banamiz-logo.png" alt="Banamiz Logo" class="logo" />
+    <div class="order-success">Order Placed Successfully</div>
+    <p>Back to Home</p>
+  </div>
+
+  <script>
+    const items = [
+      { name: 'Avil Milk', price: 70, image: 'avil.jpg' },
+      { name: 'Dry Fruit Shake', price: 80, image: 'dryfruit.jpg' },
+      { name: 'Special Avil', price: 90, image: 'special.jpg' },
+    ];
+
+    function showMenu() {
+      document.getElementById('login-page').style.display = 'none';
+      document.getElementById('menu-page').style.display = 'block';
+      const menu = document.getElementById('menu-list');
+      menu.innerHTML = '';
+      items.forEach((item, index) => {
+        const html = `
+          <div class="item">
+            <img src="${item.image}" alt="${item.name}" />
+            <div class="item-info">
+              <strong>${item.name}</strong><br />
+              ₹${item.price}
+            </div>
+            <select id="qty-${index}">
+              <option value="0">Qty</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </select>
+          </div>`;
+        menu.innerHTML += html;
+      });
+    }
+
+      function submitOrder() {
+    const customerData = {
+      name: document.getElementById('name').value,
+      email: document.getElementById('email').value,
+      phone: document.getElementById('phone').value,
+      location: document.getElementById('location').value,
+      order: document.getElementById('order').value
+    };
+
+    // Send to Google Sheets
+    fetch('https://script.google.com/macros/s/AKfycbyEjQsmHPqv-W4C0FgAp6FT-blRGQM1pJNOPuOnDtM-wyd0J_vWXUxyeWP4KfvFgGnyGQ/exec', {
+      method: 'POST',
+      body: JSON.stringify(customerData),
+      headers: { "Content-Type": "application/json" }
+    })
+    .then(res => res.text())
+    .then(data => {
+      console.log(data);
+
+      // Open WhatsApp
+      const message = `*Banamiz Order*%0AName: ${customerData.name}%0APhone: ${customerData.phone}%0ALocation: ${customerData.location}%0AOrder: ${customerData.order}`;
+      const whatsappLink = `https://wa.me/+917558811574?text=${message}`;
+      window.open(whatsappLink, '_blank');
+
+      // Show success page
+      document.getElementById('menu-page').style.display = 'none';
+      document.getElementById('success-page').style.display = 'block';
+    })
+    .catch(err => console.error('Error:', err));
+  }
+  </script>
+</body>
+
+</html>

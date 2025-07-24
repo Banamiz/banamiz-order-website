@@ -139,20 +139,32 @@
 
       
     // Send to Google Sheets
-    fetch('https://script.google.com/macros/s/AKfycbyEjQsmHPqv-W4C0FgAp6FT-blRGQM1pJNOPuOnDtM-wyd0J_vWXUxyeWP4KfvFgGnyGQ/exec', {
-      method: 'POST',
-      body: JSON.stringify(customerData),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-    .then(response => response.text())
-    .then(data => {
-      console.log('Success:', data);
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
+    function submitOrder() {
+  const customerData = {
+    name: document.querySelector("#name").value,
+    email: document.querySelector("#email").value,
+    phone: document.querySelector("#phone").value,
+    location: document.querySelector("#location").value,
+    order: document.querySelector("#order").value
+  };
+
+  const formData = new FormData();
+  for (let key in customerData) {
+    formData.append(key, customerData[key]);
+  }
+
+  fetch("https://script.google.com/macros/s/AKfycbxOK80JTrSzc32MGlnTFWjkDtBP3p9Scmw9fHZphN6Ye5bmSbdrrPXHX-7a3BP5O43H/exec", {
+    method: "POST",
+    body: formData
+  })
+  .then(res => res.text())
+  .then(data => {
+    console.log("✅ Order submitted:", data);
+  })
+  .catch(err => {
+    console.error("❌ Error submitting order:", err);
+  });
+}
 
     // Open WhatsApp
     const message = `*Banamiz Order*%0AName: ${customerData.name}%0APhone: ${customerData.phone}%0ALocation: ${customerData.location}%0AOrder: ${customerData.order}`;

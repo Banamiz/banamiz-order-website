@@ -123,29 +123,18 @@
       });
     }
 
-    function submitOrder() {
-      const orderData = items.map((item, index) => {
-        const qty = parseInt(document.getElementById(`qty-${index}`).value);
-        return qty > 0 ? `${item.name} x${qty}` : null;
-      }).filter(Boolean);
+  function submitOrder() {
+  const orderData = items.map((item, index) => {
+    const qty = parseInt(document.getElementById(`qty-${index}`).value);
+    return qty > 0 ? `${item.name} x${qty}` : null;
+  }).filter(Boolean);
 
-      const customerData = {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
-        location: document.getElementById('location').value,
-        order: orderData.join(', ')
-      };
-
-      
-    // Send to Google Sheets
-    function submitOrder() {
   const customerData = {
-    name: document.querySelector("#name").value,
-    email: document.querySelector("#email").value,
-    phone: document.querySelector("#phone").value,
-    location: document.querySelector("#location").value,
-    order: document.querySelector("#order").value
+    name: document.getElementById('name').value,
+    email: document.getElementById('email').value,
+    phone: document.getElementById('phone').value,
+    location: document.getElementById('location').value,
+    order: orderData.join(', ')
   };
 
   const formData = new FormData();
@@ -160,21 +149,23 @@
   .then(res => res.text())
   .then(data => {
     console.log("✅ Order submitted:", data);
-  })
-  .catch(err => {
-    console.error("❌ Error submitting order:", err);
-  });
-}
+    alert("Order submitted successfully!");
 
     // Open WhatsApp
     const message = `*Banamiz Order*%0AName: ${customerData.name}%0APhone: ${customerData.phone}%0ALocation: ${customerData.location}%0AOrder: ${customerData.order}`;
     const whatsappLink = `https://wa.me/+917558811574?text=${message}`;
     window.open(whatsappLink, '_blank');
-    
 
-      document.getElementById('menu-page').style.display = 'none';
-      document.getElementById('success-page').style.display = 'block';
-    }
+    // Show success page
+    document.getElementById('menu-page').style.display = 'none';
+    document.getElementById('success-page').style.display = 'block';
+  })
+  .catch(err => {
+    console.error("❌ Error submitting order:", err);
+    alert("There was a problem submitting your order.");
+  });
+}
+
   </script>
 </body>
 </html>

@@ -138,18 +138,23 @@
   };
 
   const formData = new FormData();
-  for (let key in customerData) {
-    formData.append(key, customerData[key]);
-  }
+formData.append("name", customerData.name);
+formData.append("email", customerData.email);
+formData.append("phone", customerData.phone);
+formData.append("location", customerData.location);
+formData.append("order", customerData.order);
 
-  fetch("https://script.google.com/macros/s/AKfycbxOK80JTrSzc32MGlnTFWjkDtBP3p9Scmw9fHZphN6Ye5bmSbdrrPXHX-7a3BP5O43H/exec", {
-    method: "POST",
-    body: formData
-  })
-  .then(res => res.text())
-  .then(data => {
-    console.log("✅ Order submitted:", data);
-    alert("Order submitted successfully!");
+fetch("https://script.google.com/macros/s/AKfycbzViOmlT6GgH0FKwKWrRG-Adj37dE5bWUvB1FvRB_P8-WBEqlsgnVkKcC-_HgtX0-mb/exec", {
+  method: "POST",
+  body: formData
+})
+.then(res => res.text())
+.then(data => {
+  console.log("✅ Order submitted:", data);
+})
+.catch(err => {
+  console.error("❌ Error submitting order:", err);
+});
 
     // Open WhatsApp
     const message = `*Banamiz Order*%0AName: ${customerData.name}%0APhone: ${customerData.phone}%0ALocation: ${customerData.location}%0AOrder: ${customerData.order}`;
@@ -159,12 +164,7 @@
     // Show success page
     document.getElementById('menu-page').style.display = 'none';
     document.getElementById('success-page').style.display = 'block';
-  })
-  .catch(err => {
-    console.error("❌ Error submitting order:", err);
-    alert("There was a problem submitting your order.");
-  });
-}
+  }
 
   </script>
 </body>
